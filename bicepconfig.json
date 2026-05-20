@@ -1,0 +1,16 @@
+{
+  "moduleAliases": {
+    "br": {
+      "shared": {
+        "registry": "adusasharedmodules.azurecr.io",
+        "modulePath": ""
+      }
+    }
+  },
+  "analyzers": {
+    "core": {
+      "enabled": true,
+      "verbose": true
+    }
+  }
+}
