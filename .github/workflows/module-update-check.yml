@@ -1,11 +1,12 @@
 name: module-update-check
 
-# Polls the producer registry for a new keyvault-shared version and opens a PR
-# bumping the pinned version in main.bicep. Use this if you don't run Renovate.
+# Thin caller. Real logic in the producer repo. Skip this workflow entirely
+# if your org runs Renovate (which handles OCI tag bumps centrally via the
+# config in <org>/.github/renovate.json).
 
 on:
   schedule:
-    - cron: '0 7 * * *'   # daily 07:00 UTC, one hour after producer detect
+    - cron: '0 7 * * *'
   workflow_dispatch:
 
 permissions:
@@ -13,63 +14,7 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  ACR_NAME:              ${{ vars.ACR_NAME }}
-  MODULE_REPO:           keyvault-shared
-  AZURE_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
-  AZURE_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }}
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
 jobs:
   bump:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Azure login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id:       ${{ env.AZURE_CLIENT_ID }}
-          tenant-id:       ${{ env.AZURE_TENANT_ID }}
-          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Read currently pinned version
-        id: pinned
-        run: |
-          current=$(grep -oE "keyvault-shared:[0-9]+\.[0-9]+\.[0-9]+" main.bicep | head -n1 | cut -d: -f2)
-          echo "current=$current" >> "$GITHUB_OUTPUT"
-          echo "Currently pinned: $current"
-
-      - name: Discover latest tag in ACR
-        id: latest
-        run: |
-          latest=$(az acr repository show-tags \
-            --name "$ACR_NAME" \
-            --repository "$MODULE_REPO" \
-            --orderby time_desc \
-            --output tsv \
-            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
-            | sort -V \
-            | tail -n1)
-          echo "latest=$latest" >> "$GITHUB_OUTPUT"
-          echo "Latest in ACR: $latest"
-
-      - name: Open PR if newer
-        if: steps.latest.outputs.latest != '' && steps.latest.outputs.latest != steps.pinned.outputs.current
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OLD: ${{ steps.pinned.outputs.current }}
-          NEW: ${{ steps.latest.outputs.latest }}
-        run: |
-          BRANCH="bot/keyvault-shared-${NEW}"
-          git config user.name  "module-update-bot"
-          git config user.email "module-update-bot@users.noreply.github.com"
-          git checkout -b "$BRANCH"
-          sed -i "s|keyvault-shared:${OLD}|keyvault-shared:${NEW}|g" main.bicep
-          git add main.bicep
-          git commit -m "chore: bump keyvault-shared ${OLD} -> ${NEW}"
-          git push -u origin "$BRANCH"
-          gh pr create \
-            --title "chore: bump keyvault-shared ${OLD} -> ${NEW}" \
-            --body  "Automated bump of the shared Key Vault module from \`${OLD}\` to \`${NEW}\`. CI will run what-if before merge." \
-            --label "module-update,automation"
+    uses: adusa/agentic-automation-producer/.github/workflows/consumer-module-update-check.yml@v1
+    secrets: inherit
