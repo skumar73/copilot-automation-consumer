@@ -2,7 +2,7 @@ name: deploy
 
 # Thin caller. The actual logic lives in the producer repo so platform-team
 # updates apply to every consumer at once. See:
-# <org>/agentic-automation-producer/.github/workflows/consumer-deploy.yml
+# jasontiedt/copilot-automation-releases/.github/workflows/consumer-deploy.yml
 
 on:
   pull_request:
@@ -21,5 +21,5 @@ permissions:
 
 jobs:
   deploy:
-    uses: adusa/agentic-automation-producer/.github/workflows/consumer-deploy.yml@v1
+    uses: jasontiedt/copilot-automation-releases/.github/workflows/consumer-deploy.yml@main
     secrets: inherit
