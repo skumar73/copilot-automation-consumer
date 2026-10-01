@@ -16,5 +16,5 @@ permissions:
 
 jobs:
   bump:
-    uses: jasontiedt/copilot-automation-releases/.github/workflows/consumer-module-update-check.yml@main
+    uses: skumar73/copilot-automation-releases/.github/workflows/consumer-module-update-check.yml@main
     secrets: inherit

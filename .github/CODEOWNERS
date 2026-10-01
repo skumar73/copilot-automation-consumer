@@ -1,8 +1,8 @@
 # Platform team owns the pinned shared-module version and the registry alias.
 # App-team approval alone is NOT sufficient for these files.
-main.bicep                @jasontiedt
-bicepconfig.json          @jasontiedt
-.github/workflows/        @jasontiedt
+main.bicep                @senthkumar
+bicepconfig.json          @senthkumar
+.github/workflows/        @senthkumar
 
 # Everything else is owned by the app team.
-*                         @jasontiedt
+*                         @senthkumar
