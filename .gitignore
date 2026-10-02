@@ -1,3 +1,4 @@
 .vscode/
 *.bicep.json
 .DS_Store
+main.json
