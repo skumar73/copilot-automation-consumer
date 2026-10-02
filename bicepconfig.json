@@ -2,8 +2,7 @@
   "moduleAliases": {
     "br": {
       "shared": {
-        "registry": "modupdatedemo.azurecr.io",
-        "modulePath": ""
+        "registry": "modupdatedemo.azurecr.io"
       }
     }
   },

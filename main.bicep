@@ -23,10 +23,10 @@ param logAnalyticsWorkspaceResourceId string = ''
 param tags object = {}
 
 // -- Pinned shared module version. Renovate updates this line. ---------------
-module kv 'br/shared:keyvault-shared:0.11.0' = {
+module kv 'br/shared:keyvault-shared:0.10.0' = {
   name: 'kv-${appName}-${env}'
   params: {
-    name:     'kv-${appName}-${env}-${uniqueString(resourceGroup().id, appName)}'
+    name:     take('kv-${appName}-${env}-${uniqueString(resourceGroup().id, appName)}', 24)
     location: location
     tags:     tags
     logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
